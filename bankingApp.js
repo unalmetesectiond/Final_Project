@@ -84,3 +84,31 @@ class BankingApp {
     isAccountLocked(email) {
         return this.failedAttempts[email] >= 10;
     }
+
+    async mainMenu(user, readInput) {
+        let choice;
+        do {
+            console.log(`\nWelcome, ${user.username}!`);
+            console.log('1. View Balance');
+            console.log('2. Deposit Funds');
+            console.log('3. Withdraw Funds');
+            console.log('4. Send E-Transfer');
+            console.log('5. Accept E-Transfer');
+            console.log('6. Change PIN');
+            console.log('7. Exit');
+
+            choice = await readInput('Enter your choice: ');
+
+            switch (choice) {
+                case '1': // View balance
+                    console.log(`Your balance: $${user.viewBalance()}`);
+                    break;
+
+                case '2': // Deposit funds
+                    const depositAmount = parseFloat(await readInput('Enter amount to deposit: '));
+                    if (user.deposit(depositAmount)) {
+                        console.log(`Deposit successful! New balance: $${user.viewBalance()}`);
+                    } else {
+                        console.log('Invalid deposit amount.');
+                    }
+                    break;
