@@ -112,6 +112,86 @@ class BankingApp {
                         console.log('Invalid deposit amount.');
                     }
                     break;
+
+                
+
+                    case '3': // Withdraw funds
+                    const withdrawAmount = parseFloat(await readInput('Enter amount to withdraw: '));
+                    if (user.withdraw(withdrawAmount)) {
+                        console.log(`Withdrawal successful! New balance: $${user.viewBalance()}`);
+                    } else {
+                        console.log('Insufficient funds or invalid amount.');
+                    }
+                    break;
+
+                case '4': // Send E-Transfer
+                    const recipientEmail = await readInput('Enter recipient email: ');
+                    const amount = parseFloat(await readInput('Enter amount to send: '));
+                    const securityQuestion = await readInput('Enter a security question for the recipient: ');
+                    const securityAnswer = await readInput('Enter the answer to the security question: ');
+
+                    if (user.balance >= amount && amount > 0) {
+                        user.balance -= amount;
+
+                        const transfer = new ETransfer(
+                            user.username,
+                            recipientEmail,
+                            amount,
+                            securityQuestion,
+                            securityAnswer
+                        );
+
+                        this.pendingTransfers.push(transfer);
+                        console.log(`E-Transfer of $${amount} sent to ${recipientEmail}.`);
+                    } else {
+                        console.log('Insufficient funds or invalid amount.');
+                    }
+                    break;
+
+                case '5': // Accept E-Transfer
+                    const transfersForUser = this.pendingTransfers.filter(
+                        (t) => t.recipientEmail === user.username
+                    );
+
+                    if (transfersForUser.length === 0) {
+                        console.log('No pending e-transfers for your account.');
+                        break;
+                    }
+
+                    for (const transfer of transfersForUser) {
+                        console.log(`From: ${transfer.senderEmail}`);
+                        console.log(`Amount: $${transfer.amount}`);
+                        console.log(`Security Question: ${transfer.securityQuestion}`);
+
+                        const answer = await readInput('Enter the answer to the security question: ');
+
+                        if (transfer.validateAnswer(answer)) {
+                            user.balance += transfer.amount;
+                            this.pendingTransfers = this.pendingTransfers.filter((t) => t !== transfer);
+                            console.log('E-Transfer accepted successfully.');
+                        } else {
+                            console.log('Incorrect answer. Unable to accept e-transfer.');
+                        }
+                    }
+                    break;
+
+                case '6': // Change PIN
+                    const newPIN = await readInput('Enter your new PIN: ');
+                    const confirmPIN = await readInput('Confirm your new PIN: ');
+                    if (newPIN === confirmPIN && validatePIN(newPIN)) {
+                        user.PIN = newPIN;
+                        console.log('PIN successfully changed.');
+                    } else {
+                        console.log('PINs do not match or invalid format.');
+                    }
+                    break;
+
+                case '7': // Exit
+                    console.log('Thank you for using the banking app!');
+                    break;
+
+                default:
+                    console.log('Invalid option. Please try again.');    
                 }
             } while (choice !== '7');
     
