@@ -112,3 +112,11 @@ class BankingApp {
                         console.log('Invalid deposit amount.');
                     }
                     break;
+                }
+            } while (choice !== '7');
+    
+            this.saveData();
+        }
+    }
+    
+    module.exports = BankingApp;
