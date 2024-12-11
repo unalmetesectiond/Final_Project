@@ -33,3 +33,42 @@ const readInput = (query) =>
         // If email is valid and account is not locked, proceed
         break;
     } while (true);
+
+    // Prompt for PIN
+    do {
+        const PIN = await readInput('Enter your PIN: ');
+
+        const authResult = app.authenticateUser(email, PIN);
+
+        // Handle locked account
+        if (authResult === 'LOCKED') {
+            console.log('Your account is permanently locked. Please contact support.');
+            process.stdin.pause();
+            return;
+        }
+
+        // Handle incorrect PIN
+        if (!authResult) {
+            sessionFailures++;
+            console.log(`Invalid PIN. Attempt ${sessionFailures} of 3 for this session.`);
+
+            // Exit after 3 incorrect attempts in the session
+            if (sessionFailures >= 3) {
+                console.log('Too many failed attempts. Exiting the application.');
+                process.stdin.pause();
+                return;
+            }
+        } else {
+            // Reset session failures on successful login
+            sessionFailures = 0;
+            authenticatedUser = authResult;
+        }
+    } while (!authenticatedUser);
+
+    // If authenticated, proceed to main menu
+    if (authenticatedUser) {
+        await app.mainMenu(authenticatedUser, readInput);
+    }
+
+    process.stdin.pause();
+})();
