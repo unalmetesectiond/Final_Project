@@ -1,17 +1,17 @@
 [
-    {
-      "username": "user1@example.com",
-      "PIN": "1234",
-      "balance": 500
-    },
-    {
-      "username": "user2@example.com",
-      "PIN": "1234",
-      "balance": 1000
-    },
-    {
-      "username": "user3@example.com",
-      "PIN": "1234",
-      "balance": 250
-    }
-  ]
+  {
+    "username": "user1@example.com",
+    "PIN": "1234",
+    "balance": 500
+  },
+  {
+    "username": "user2@example.com",
+    "PIN": "1234",
+    "balance": 1000
+  },
+  {
+    "username": "user3@example.com",
+    "PIN": "1234",
+    "balance": 250
+  }
+]
